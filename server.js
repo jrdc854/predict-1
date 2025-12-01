@@ -16,8 +16,6 @@ const MONGO_URI = process.env.MONGO_URI;
 const app = express();
 app.use(express.json());
 
-const mongoose = require('mongoose');
-const productoController = require('./controllers/productoController'); // Importar el controlador
 
 //Conexión a mongodb
 mongoose.connect(MONGO_URI)
