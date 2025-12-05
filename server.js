@@ -10,6 +10,7 @@ const predictRoutes = require("./routes/predictRoutes");
 const productoController = require('./controllers/productoController');
 const { initModel } = require("./services/tfModelService");
 
+const MODEL_VERSION = process.env.MODEL_VERSION || "v1.0"; 
 const PORT = process.env.PORT || 3002;
 const MONGO_URI = process.env.MONGO_URI;
 
