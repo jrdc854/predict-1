@@ -1,7 +1,10 @@
-const KUNNA_URL = "https://openapi.kunna.es/data/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjM2NDEwNjB9.ixb4O5Jgk-e_oPMSsycpD7A_iGVqIl4Ijl2a_kLrT94";
+import dotenv from "dotenv";
+dotenv.config();
+
+const KUNNA_URL = process.env.KUNNA_URL;
 
 // alias fijo del contador (ya no usamos uid)
-const ALIAS = "6339651";
+const ALIAS = process.env.KUNNA_ALIAS;
 
 /**
  * Llama a Kunna con un rango [timeStart, timeEnd]
