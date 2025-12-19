@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 
 
-//Conexión a mongodb
+
 mongoose.connect(MONGO_URI)
 .then(() => {
   console.log('[MONGODB] Conexión a la base de datos establecida');
@@ -26,7 +26,7 @@ mongoose.connect(MONGO_URI)
   console.error('[MONGODB] Error de conexión a la base de datos:', err);
 });
 
-// Servir la carpeta del modelo TFJS (model/model.json + pesos)
+
 const modelDir = path.resolve(__dirname, "model");
 app.use("/model", express.static(modelDir));
 
@@ -36,7 +36,7 @@ app.put('/api/producto/:id', productoController.actualizarProducto);
 app.get('/api/producto', productoController.obtenerTodosLosProductos);
 app.delete('/api/producto/:id', productoController.eliminarProducto);
 
-// Rutas del servicio PREDICT
+
 app.use("/", predictRoutes);
 
 // Arranque del servidor y carga del modelo
