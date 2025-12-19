@@ -7,7 +7,7 @@ const path = require("path");
 const mongoose = require('mongoose');
 
 const predictRoutes = require("./routes/predictRoutes");
-const productoController = require('./controllers/productoController');
+const predictController = require('./controllers/predictController');
 const { initModel } = require("./services/tfModelService");
 
 const MODEL_VERSION = process.env.MODEL_VERSION || "v1.0"; 
@@ -30,12 +30,11 @@ mongoose.connect(MONGO_URI)
 const modelDir = path.resolve(__dirname, "model");
 app.use("/model", express.static(modelDir));
 
-app.get('/api/producto/:id', productoController.obtenerProductoPorId);
-app.post('/api/producto', productoController.crearProducto);
-app.put('/api/producto/:id', productoController.actualizarProducto);
-app.get('/api/producto', productoController.obtenerTodosLosProductos);
-app.delete('/api/producto/:id', productoController.eliminarProducto);
-
+app.get('/api/predict/heañthy', predictController.health);
+app.post('/api/predict/ready', predictController.ready);
+app.post('/api/predict', predictController.doPredict);
+app.get('/api/predict', predictController.obtenerTodos); 
+app.delete('/api/predict/:id', predictController.eliminar); 
 
 app.use("/", predictRoutes);
 

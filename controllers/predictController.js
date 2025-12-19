@@ -1,5 +1,6 @@
 // controllers/predictController.js
 const { getModelInfo, predict } = require("../services/tfModelService");
+const Prediction = require("../model/dataModel"); // <--- AÑADIDO: Importar el modelo
 
 function health(req, res) {
   res.json({
@@ -64,9 +65,22 @@ async function doPredict(req, res) {
     const latencyMs = Date.now() - start;
     const timestamp = new Date().toISOString();
 
-    // De momento sin MongoDB → predictionId null
+    // --- AÑADIDO: Lógica para guardar en Mongo ---
+    // Convertimos prediction a número si viene en array para que cuadre con tu Schema
+    const valPred = Array.isArray(prediction) ? prediction[0] : prediction;
+    
+    const nuevaPrediccion = new Prediction({
+        features: features,
+        prediction: valPred,
+        modelVersion: info.modelVersion,
+        // ts: se pone solo por el default
+    });
+    const guardado = await nuevaPrediccion.save();
+    // ---------------------------------------------
+
+    // Modificado solo predictionId para devolver el real
     res.status(201).json({
-      predictionId: null,
+      predictionId: guardado._id, 
       prediction,
       timestamp,
       latencyMs
@@ -77,8 +91,39 @@ async function doPredict(req, res) {
   }
 }
 
+// Corregido "red" -> "res" para que funcione
+async function obtenerTodos(req, res) { 
+
+    try {
+        // --- MODIFICADO: Usar Mongoose en lugar de tfModelService ---
+        const predictions = await Prediction.find(); 
+        res.status(200).send({ predictions });
+    } catch (err) {
+        res.status(500).send({ mensaje: `Error al listar las predicciones: ${err.message}`});
+    }
+}
+
+async function eliminar(req, res) {
+    let predictionId = req.params.id;
+    try {
+        // --- MODIFICADO: Usar Mongoose en lugar de productoService ---
+        const resultado = await Prediction.findByIdAndDelete(predictionId);
+        
+        // findByIdAndDelete devuelve null si no encuentra el producto a eliminar
+        if (!resultado) { 
+            return res.status(404).send({ mensaje: 'El producto a eliminar no existe' });
+        }
+        // Si se eliminó correctamente, respondemos con 200 OK y el producto eliminado
+        res.status(200).send({ mensaje: 'Producto eliminado correctamente', prediction: resultado });
+
+    } catch (err) {
+        res.status(500).send({ mensaje: `Error al eliminar el producto: ${err.message}` });
+    }
+}
 module.exports = {
   health,
   ready,
-  doPredict
+  doPredict,
+  obtenerTodos,
+  eliminar
 };
