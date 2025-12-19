@@ -39,7 +39,7 @@ app.delete('/api/producto/:id', productoController.eliminarProducto);
 // Rutas del servicio PREDICT
 app.use("/", predictRoutes);
 
-// Arranque del servidor + carga del modelo
+// Arranque del servidor y carga del modelo
 app.listen(PORT, async () => {
   const serverUrl = `http://localhost:${PORT}`;
   console.log(`[PREDICT] Servicio escuchando en ${serverUrl}`);
